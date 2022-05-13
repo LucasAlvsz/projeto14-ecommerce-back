@@ -21,3 +21,19 @@ export const signUpValidation = async (req, res, next) => {
 
   next()
 }
+
+export const signInValidation = async (req, res, next) => {
+  const signInSchema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(3).max(30).required("O tamanho"),
+  })
+
+  const { error } = signInSchema.validate(req.body, { abortEarly: false })
+
+  if (error) {
+    const messages = error.details.map(({ message }) => message).join(", ")
+    return res.status(422).send(messages)
+  }
+
+  next()
+}
