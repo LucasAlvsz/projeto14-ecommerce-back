@@ -1,5 +1,4 @@
 import { MongoClient } from "mongodb"
-
 let db = null
 try {
   const mongoClient = new MongoClient(process.env.MONGO_URI)
