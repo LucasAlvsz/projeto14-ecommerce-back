@@ -17,9 +17,9 @@ import {
 
 const productsRouter = Router()
 
-productsRouter.get("/products", getProductsValidation, getProducts)
+productsRouter.get("/search", getProductsValidation, getProducts)
 productsRouter.get(
-	"/products/:productId",
+	"/product/:productId",
 	getProductsIdValidation,
 	productIdValidation,
 	getProducts

@@ -1,17 +1,44 @@
 import Joi from "joi"
 import { ObjectId } from "mongodb"
+import getCategories from "../utils/getCategories.js"
+
+export const validateCategories = (categories, reqCategories) => {
+	if (reqCategories) {
+		const reqCategoriesArray = reqCategories.split("+")
+		reqCategoriesArray.forEach(reqCategory => {
+			if (!categories.includes(reqCategory)) return "A valid category"
+		})
+		return reqCategories
+	}
+	return "categories is required"
+}
 
 export const getProductsValidation = async (req, res, next) => {
+	const categories = await getCategories()
+	let { maxPrice, minPrice } = req.query
+	if (maxPrice) maxPrice = Number(req.query.maxPrice)
+	if (minPrice) minPrice = Number(req.query.minPrice)
 	const schema = Joi.object({
-		search: Joi.string(),
-		limit: Joi.number().integer().min(1).max(100).default(10),
-		sortByPrice: Joi.string().valid("asc", "desc").default("asc"),
-		categories: Joi.string().allow("").default(""),
-		sortByPriceRange: Joi.string(),
+		keyword: Joi.string().default(""),
+		limit: Joi.number().integer().min(1).max(Infinity).default(10),
+		categories: Joi.string()
+			.valid(validateCategories(categories, req.query.categories))
+			.default(categories),
+		sortBy: Joi.string().valid("price").default(false),
+		maxPrice: Joi.number().integer().min(0).default(Infinity),
+		minPrice: Joi.number().integer().min(0).default(0),
 	})
-	const { error } = schema.validate(req.query, { abortEarly: false })
+	const { error, value } = schema.validate(req.query, { abortEarly: false })
 	if (error)
 		return res.status(422).send(error.details.map(({ message }) => message))
+
+	res.locals.formattedQuery = {
+		...value,
+		categories:
+			typeof value.categories === "object"
+				? categories
+				: value.categories.split("+"),
+	}
 	next()
 }
 
@@ -57,7 +84,6 @@ export const postProductsValidation = async (req, res, next) => {
 }
 
 export const putProductsIdValidation = async (req, res, next) => {
-	console.log(req.params.productId)
 	const schema = Joi.object({
 		params: Joi.object({
 			productId: Joi.string()

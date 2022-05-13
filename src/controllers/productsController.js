@@ -1,42 +1,38 @@
 import db from "../db/db.js"
 import { ObjectId } from "mongodb"
+import getKeywordRegex from "../utils/getKeywordRegex.js"
 
 export const getProducts = async (req, res) => {
-	const { limit, sortByPrice, search } = req.query
-	let categories = req.query.categories
-	let sortByPriceRange = req.query.sortByPriceRange
+	const { limit, sortBy, maxPrice, minPrice, categories } =
+		res.locals.formattedQuery
+	const { keyword } = req.query
 
-	categories ? (categories = categories.split(",")) : categories
-	sortByPriceRange
-		? (sortByPriceRange = sortByPriceRange.split(","))
-		: sortByPriceRange
+	let formattedKeyword
+	if (keyword) {
+		formattedKeyword = getKeywordRegex(keyword)
+	}
 
 	const options = {
-		limit: parseInt(limit),
-		...(sortByPrice && {
-			sort: { price: sortByPrice === "desc" ? -1 : 1 },
-		}),
+		limit,
+		...(sortBy && { sort: { price: sortBy === "price" ? 1 : "" } }),
 	}
+
 	try {
 		const products = await db
 			.collection("products")
 			.find(
 				{
-					...(search && { $text: { $search: search } }),
-					...(categories && { categories: { $in: categories } }),
+					...(keyword && { name: formattedKeyword }),
+					categories: { $in: categories },
 					$and: [
 						{
 							price: {
-								$gte: sortByPriceRange
-									? parseFloat(sortByPriceRange[0])
-									: 0,
+								$gte: minPrice,
 							},
 						},
 						{
 							price: {
-								$lte: sortByPriceRange
-									? parseFloat(sortByPriceRange[1])
-									: Infinity,
+								$lte: maxPrice,
 							},
 						},
 					],
