@@ -1,24 +1,16 @@
 import bcrypt from "bcrypt"
 
 import db from "./../db/db.js"
-import { signupSchema } from "./../schemas/authSchema.js"
 
-export async function signup(req, res) {
-  const { error } = signupSchema.validate(req.body, { abortEarly: false })
-
-  if (error) {
-    const messages = error.details.map(({ message }) => message).join(", ")
-    return res.status(422).send(messages)
-  }
-
+export const signUp = async (req, res) => {
   try {
     const { name, email, password } = req.body
 
     const emailExists = await db.collection("users").findOne({ email })
+    if (emailExists)
+      return res.status(409).send("email, this email already exists")
 
-    if (emailExists) return res.status(422).send("This email already exists.")
-
-    const encryptedPassword = bcrypt.hashSync(
+    const hashedPassword = bcrypt.hashSync(
       password,
       parseInt(process.env.BCRYPT_SALT),
     )
@@ -26,7 +18,7 @@ export async function signup(req, res) {
     const newUser = {
       name,
       email,
-      password: encryptedPassword,
+      password: hashedPassword,
       isAdmin: false,
       created_at: Date.now(),
       updated_at: Date.now(),
