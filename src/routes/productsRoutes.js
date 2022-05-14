@@ -6,8 +6,8 @@ import {
 	postProductsValidation,
 	putProductsIdValidation,
 	deleteProductsIdValidation,
-} from "../middlewares/productsMiddlewares.js"
-import { productIdValidation } from "../middlewares/productIdMiddlewares.js"
+} from "../middlewares/productsValidationMiddlewares.js"
+import { productIdValidation } from "../middlewares/dbValidationMiddlewares.js"
 import {
 	getProducts,
 	postProducts,
