@@ -41,7 +41,7 @@ export const signIn = async (req, res) => {
     const userExists = await db.collection("users").findOne({ email })
     if (!userExists) return res.status(404).send("user, user not found.")
 
-    if (!bcrypt.compare(password, userExists.password))
+    if (!bcrypt.compareSync(password, userExists.password))
       return res.status(401).send("password, this password is wrong.")
 
     const filter = { $and: [{ userId: userExists._id }, { loggedIn: true }] }
