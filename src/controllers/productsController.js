@@ -21,7 +21,7 @@ export const searchProducts = async (req, res) => {
 			.find(
 				{
 					...(keyword && { name: formattedKeyword }),
-					categories: { $in: categories },
+					categories: { $in: ["notebooks", "headsets"] },
 					$and: [
 						{
 							price: {
