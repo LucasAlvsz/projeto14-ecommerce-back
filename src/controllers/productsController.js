@@ -6,7 +6,7 @@ export const searchProducts = async (req, res) => {
 	const { limit, sortBy, maxPrice, minPrice, categories } =
 		res.locals.formattedQuery
 	const { keyword } = req.query
-
+	console.log(req.res.locals.formattedQuery)
 	let formattedKeyword
 	if (keyword) formattedKeyword = getKeywordRegex(keyword)
 
@@ -16,12 +16,13 @@ export const searchProducts = async (req, res) => {
 	}
 
 	try {
+		console.log(categories)
 		const products = await db
 			.collection("products")
 			.find(
 				{
 					...(keyword && { name: formattedKeyword }),
-					categories: { $in: categories },
+					categories: { $in: ["notebooks", "headsets"] },
 					$and: [
 						{
 							price: {

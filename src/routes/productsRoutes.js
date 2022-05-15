@@ -22,7 +22,7 @@ productsRouter.get(
 	"/product/:productId",
 	getProductsIdValidation,
 	productIdValidation,
-	getProducts
+	searchProducts
 )
 productsRouter.post("/products", postProductsValidation, postProducts)
 productsRouter.put(
@@ -37,5 +37,6 @@ productsRouter.delete(
 	productIdValidation,
 	deleteProducts
 )
+// productsRouter.post("/category", )
 
 export default productsRouter
