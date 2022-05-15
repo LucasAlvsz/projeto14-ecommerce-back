@@ -18,6 +18,6 @@ app.get("/", (req, res) => {
 app.use(routes)
 
 app.listen(process.env.PORT || 5000, () => {
-	console.clear()
+	// console.clear()
 	console.log(`Server is running on port ${process.env.PORT || 5000}`)
 })

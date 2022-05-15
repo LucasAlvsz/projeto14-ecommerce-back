@@ -2,15 +2,13 @@ import db from "../db/db.js"
 import { ObjectId } from "mongodb"
 import getKeywordRegex from "../utils/getKeywordRegex.js"
 
-export const getProducts = async (req, res) => {
+export const searchProducts = async (req, res) => {
 	const { limit, sortBy, maxPrice, minPrice, categories } =
 		res.locals.formattedQuery
 	const { keyword } = req.query
 
 	let formattedKeyword
-	if (keyword) {
-		formattedKeyword = getKeywordRegex(keyword)
-	}
+	if (keyword) formattedKeyword = getKeywordRegex(keyword)
 
 	const options = {
 		limit,

@@ -9,15 +9,15 @@ import {
 } from "../middlewares/productsValidationMiddlewares.js"
 import { productIdValidation } from "../middlewares/dbValidationMiddlewares.js"
 import {
-	getProducts,
+	searchProducts,
 	postProducts,
 	putProducts,
 	deleteProducts,
 } from "../controllers/productsController.js"
 
 const productsRouter = Router()
-
-productsRouter.get("/search", getProductsValidation, getProducts)
+productsRouter.get("/products")
+productsRouter.get("/products/search", getProductsValidation, searchProducts)
 productsRouter.get(
 	"/product/:productId",
 	getProductsIdValidation,
