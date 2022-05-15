@@ -5,9 +5,10 @@ import getCategories from "../utils/getCategories.js"
 export const validateCategories = (categories, reqCategories) => {
 	if (reqCategories) {
 		const reqCategoriesArray = reqCategories.split("+")
-		reqCategoriesArray.forEach(reqCategory => {
-			if (!categories.includes(reqCategory)) return "A valid category"
-		})
+		const isValid = reqCategoriesArray.every(category =>
+			categories.includes(category)
+		)
+		if (!isValid) return "A valid category"
 		return reqCategories
 	}
 	return "categories is required"
@@ -20,7 +21,7 @@ export const getProductsValidation = async (req, res, next) => {
 	if (minPrice) minPrice = Number(req.query.minPrice)
 	const schema = Joi.object({
 		keyword: Joi.string().default(""),
-		limit: Joi.number().integer().min(1).max(Infinity).default(10),
+		limit: Joi.number().integer().min(1).max(Infinity).default(Infinity),
 		categories: Joi.string()
 			.valid(validateCategories(categories, req.query.categories))
 			.default(categories),
