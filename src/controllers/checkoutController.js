@@ -208,12 +208,7 @@ export const postCheckout = async (req, res) => {
     }
 
     await db.collection("checkouts").insertOne(newCheckout)
-    await db
-      .collection("carts")
-      .updateOne(
-        { _id: new ObjectId(lastCartId) },
-        { $set: { ...othersInfo, checked: true } },
-      )
+    await db.collection("carts").deleteOne({ _id: new ObjectId(lastCartId) })
     res.status(201).send("checkout, successfully entered checkout.")
   } catch (e) {
     res.sendStatus(500)
